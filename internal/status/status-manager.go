@@ -6,12 +6,10 @@ import (
 	"os"
 )
 
-const ProjectRoot string = "/home/zenwing/topo/work/mine/todo-go/"
-
 func CreateStatFile(port string) (*os.File, error) {
-	file, err := os.Create(ProjectRoot + "server-stats/" + port + ".json")
+	file, err := os.Create(os.Getenv("PROJECT_ROOT") + "server-stats/" + port + ".json")
 	if err != nil {
-        fmt.Println("error from CreateStatFile()")
+		fmt.Println("error from CreateStatFile()")
 		return nil, err
 	}
 

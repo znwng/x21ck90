@@ -4,16 +4,24 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"os"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/joho/godotenv"
 )
 
 var DB *sql.DB
 
 func Init() {
-	var err error
+	_ = godotenv.Load()
 
-	DB, err = sql.Open("mysql", "todo_db:Todo_db#123@tcp(127.0.0.1:3306)/todos")
+	dsn := os.Getenv("DB_DSN")
+	if dsn == "" {
+		log.Fatal("DB_DSN is not set")
+	}
+
+	var err error
+	DB, err = sql.Open("mysql", dsn)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -30,7 +38,7 @@ func Close() error {
 		return nil
 	}
 
-    fmt.Println("closing DB conn")
-    return DB.Close()
+	fmt.Println("closing DB conn")
+	return DB.Close()
 }
 

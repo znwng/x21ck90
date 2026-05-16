@@ -2,4 +2,4 @@ server-stats/
 log
 run
 deploy.sh
-
+.env
