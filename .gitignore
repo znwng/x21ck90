@@ -1,6 +1,6 @@
 server-stats/
-log
 logs/
+logs.zip
 run
 deploy.sh
 .env

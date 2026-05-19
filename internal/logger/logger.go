@@ -15,6 +15,14 @@ type LogEntry struct {
 	Path      string `json:"path"`
 }
 
+func OpenOrCreate(name string) (*os.File, error) {
+	return os.OpenFile(
+		name,
+		os.O_APPEND|os.O_CREATE|os.O_WRONLY,
+		0644,
+	)
+}
+
 func Log(method string, statusCode int, path string, clientIP string) {
 	entry := LogEntry{
 		Timestamp: time.Now().UTC().Format(time.RFC3339),
@@ -24,16 +32,14 @@ func Log(method string, statusCode int, path string, clientIP string) {
 		Path:      path,
 	}
 
-	wd, err := os.Getwd()
-	if err != nil {
-		return
-	}
+	logDirPath := os.Getenv("LOG_DIR")
 
-	file, err := os.OpenFile(
-		filepath.Join(wd, "log"),
-		os.O_APPEND|os.O_CREATE|os.O_WRONLY,
-		0644,
+	filename := filepath.Join(
+		logDirPath,
+		time.Now().Format("02012006"),
 	)
+
+	file, err := OpenOrCreate(filename)
 	if err != nil {
 		return
 	}
@@ -45,8 +51,7 @@ func Log(method string, statusCode int, path string, clientIP string) {
 
 	encoder := json.NewEncoder(file)
 
-	err = encoder.Encode(entry)
-	if err != nil {
+	if err := encoder.Encode(entry); err != nil {
 		return
 	}
 }
